@@ -1,10 +1,10 @@
-// @ts-ignore
+import "dotenv/config";
+
 import express, { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 
 import { ApiError } from "./api-error";
 import { userRouter } from "./routers/user.router";
-
-const PORT = 8080;
 
 const app = express();
 app.use(express.json());
@@ -19,13 +19,14 @@ app.use(
   },
 );
 
-// @ts-ignore
 process.on("uncaughtException", (err) => {
   console.error(err);
-  // @ts-ignore
-    process.exit(1);
+  process.exit(1);
 });
 
-app.listen(PORT, () => {
+const PORT = 8080;
+
+app.listen(PORT, async () => {
+  await mongoose.connect(process.env.DB_URI);
   console.log("Server start on port 8080");
 });
