@@ -1,71 +1,52 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ctrWrapper } from "../helpers/ctrWrapper";
+import { IUser } from "../interfaces/user.iterface";
 import { userService } from "../services/user.service";
-import { IUser } from "../user.iterface";
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users = await userService.getAllUsers();
+  const users = await userService.getAllUsers();
 
-    res.json(users);
-  } catch (e) {
-    next(e);
-  }
+  res.json(users);
 };
 
 const addUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const dto = req.body as Partial<IUser>;
+  const dto = req.body as Partial<IUser>;
 
-    const newUser = await userService.addUser(dto);
+  const newUser = await userService.addUser(dto);
 
-    res.status(201).json(newUser);
-  } catch (e) {
-    next(e);
-  }
+  res.status(201).json(newUser);
 };
 
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const user = await userService.getUserById(id);
+  const user = await userService.getUserById(id);
 
-    res.json(user);
-  } catch (e) {
-    next(e);
-  }
+  res.json(user);
 };
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const dto = req.body as Partial<IUser>;
+  const { id } = req.params;
+  const dto = req.body as Partial<IUser>;
 
-    const user = await userService.updateUser(dto, id);
+  const user = await userService.updateUser(dto, id);
 
-    res.status(200).json(user);
-  } catch (e) {
-    next(e);
-  }
+  res.status(200).json(user);
 };
 
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    await userService.deleteUser(id);
+  await userService.deleteUser(id);
 
-    res.status(200).json({ message: "delete is success" });
-  } catch (e) {
-    next(e);
-  }
+  res.status(200).json({ message: "delete is success" });
 };
 
 export const userController = {
-  addUser,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
+  addUser: ctrWrapper(addUser),
+  getAllUsers: ctrWrapper(getAllUsers),
+  getUserById: ctrWrapper(getUserById),
+  updateUser: ctrWrapper(updateUser),
+  deleteUser: ctrWrapper(deleteUser),
 };

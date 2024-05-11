@@ -1,7 +1,8 @@
+import Joi from "joi";
 import mongoose from "mongoose";
 
 import { RoleEnum } from "../enums/role.enum";
-import { IUser } from "../user.iterface";
+import { IUser } from "../interfaces/user.iterface";
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,4 +20,15 @@ const userSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false },
 );
 
-export const User = mongoose.model<IUser>("User", userSchema);
+const bodySchema = Joi.object<IUser>({
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+  phone: Joi.string(),
+  role: Joi.string(),
+  isDeleted: Joi.boolean(),
+});
+
+const User = mongoose.model<IUser>("User", userSchema);
+
+export { User, bodySchema };

@@ -3,7 +3,7 @@ import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 
-import { ApiError } from "./api-error";
+import { IError } from "./interfaces/error.interface";
 import { userRouter } from "./routers/user.router";
 
 const app = express();
@@ -11,13 +11,10 @@ app.use(express.json());
 
 app.use("/users", userRouter);
 
-app.use(
-  "*",
-  (err: ApiError, req: Request, res: Response, next: NextFunction) => {
-    res.status(err.status || 500).json({ message: err.message });
-    return;
-  },
-);
+app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
+  res.status(err.status || 500).json({ message: err.message });
+  return;
+});
 
 process.on("uncaughtException", (err) => {
   console.error(err);

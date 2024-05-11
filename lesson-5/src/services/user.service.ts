@@ -1,5 +1,5 @@
+import { IUser } from "../interfaces/user.iterface";
 import { userRepository } from "../repositories/user.repository";
-import { IUser } from "../user.iterface";
 
 const getAllUsers = async (): Promise<IUser[]> => {
   return await userRepository.getAllUsers();
