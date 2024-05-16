@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ctrWrapper } from "../helpers/ctrWrapper";
 import { HttpError } from "../helpers/HttpError";
-import { IUser } from "../interfaces/user.iterface";
+import { IUser } from "../interfaces/userInterface";
 import { User } from "../models/userModel";
 
 const getAll = async (_: Request, res: Response) => {

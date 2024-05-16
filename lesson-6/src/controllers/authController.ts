@@ -1,18 +1,14 @@
 import * as crypto from "node:crypto";
 
 import bcrypto from "bcrypt";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 
-import { createJwt } from "../helpers/createJwt";
 import { ctrWrapper } from "../helpers/ctrWrapper";
 import { HttpError } from "../helpers/HttpError";
+import { createToken, isValidToken } from "../helpers/jwtWrapper";
 import { User } from "../models/userModel";
 
-const signUp = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
+const signUp = async (req: Request, res: Response): Promise<void> => {
   const dto = req.body;
   const normalizeEmail = dto.email.toLowerCase();
   const user = await User.findOne({ email: normalizeEmail });
@@ -25,7 +21,7 @@ const signUp = async (
 
   const verificationToken = crypto.randomUUID();
 
-  const token = createJwt(verificationToken);
+  const token = createToken(verificationToken);
 
   await User.create({
     ...dto,
@@ -53,11 +49,11 @@ const signIn = async (req: Request, res: Response) => {
     throw HttpError(401, "Email or password is incorrect");
   }
 
-  const token = createJwt(user.verificationToken);
+  const token = createToken(user.verificationToken);
 
   await User.findByIdAndUpdate(user._id, { ...token });
 
-  res.json(token);
+  res.json({ ...token, message: "Sign-in is success" });
 };
 
 const logout = async (req: Request, res: Response) => {
@@ -71,8 +67,41 @@ const logout = async (req: Request, res: Response) => {
   res.status(204).end();
 };
 
+const refresh = async (req: Request, res: Response) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader === undefined) {
+    throw HttpError(401, "Invalid token");
+  }
+
+  const [bearer, token] = authHeader.split(" ");
+
+  if (bearer !== "Bearer") {
+    throw HttpError(401, "Invalid token");
+  }
+
+  const { verificationToken } = isValidToken(token, "refresh");
+
+  const user = await User.findOne({ verificationToken });
+
+  if (user === null) {
+    throw HttpError(401, "Invalid token");
+  }
+
+  if (user.refreshToken !== token) {
+    throw HttpError(401, "Invalid token");
+  }
+
+  const newTokens = createToken(verificationToken);
+
+  await User.findOneAndUpdate({ verificationToken }, { ...newTokens });
+
+  res.json({ message: "Refresh token is success", ...newTokens });
+};
+
 export const authControllers = {
   signUp: ctrWrapper(signUp),
   signIn: ctrWrapper(signIn),
   logout: ctrWrapper(logout),
+  refresh: ctrWrapper(refresh),
 };

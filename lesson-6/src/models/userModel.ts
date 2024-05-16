@@ -1,8 +1,8 @@
 import Joi from "joi";
 import mongoose from "mongoose";
 
-import { RoleEnum } from "../enums/role.enum";
-import { IUser } from "../interfaces/user.iterface";
+import { RoleEnum } from "../enums/roleEnum";
+import { IUser } from "../interfaces/userInterface";
 
 const userSchema = new mongoose.Schema(
   {

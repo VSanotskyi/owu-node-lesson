@@ -3,7 +3,7 @@ import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 
-import { IError } from "./interfaces/error.interface";
+import { IError } from "./interfaces/errorInterface";
 import { router } from "./routers";
 
 const app = express();

@@ -10,15 +10,16 @@ const userRouter = Router();
 
 userRouter.get("/", auth, userController.getAll);
 
-userRouter.get("/:id", isValidId, userController.getById);
+userRouter.get("/:id", auth, isValidId, userController.getById);
 
 userRouter.put(
   "/:id",
+  auth,
   isValidId,
   validateBody(updateUserSchema),
   userController.update,
 );
 
-userRouter.delete("/:id", isValidId, userController.remove);
+userRouter.delete("/:id", auth, isValidId, userController.remove);
 
 export { userRouter };
