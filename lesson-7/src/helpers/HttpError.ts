@@ -1,4 +1,4 @@
-import { IError } from "../interfaces/error.interface";
+import { IError } from "../interfaces/errorInterface";
 
 const messageList = {
   400: "Bad Request",
@@ -16,4 +16,4 @@ const HttpError = (status: number, message = messageList[status]) => {
   return error;
 };
 
-export { HttpError, IError };
+export { HttpError };

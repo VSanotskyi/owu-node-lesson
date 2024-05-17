@@ -1,4 +1,4 @@
-import { RoleEnum } from "../enums/role.enum";
+import { RoleEnum } from "../enums/roleEnum";
 
 export interface IUser {
   _id: string;
@@ -8,4 +8,8 @@ export interface IUser {
   password: string;
   role: RoleEnum;
   isDeleted: boolean;
+  verificationToken: string;
+  accessToken: string;
+  refreshToken: string;
+  verify: boolean;
 }

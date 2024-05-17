@@ -3,22 +3,20 @@ import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 
-import { IError } from "./interfaces/error.interface";
-import { userRouter } from "./routers/user.router";
+import { IError } from "./interfaces/errorInterface";
+import { router } from "./routers";
 
 const app = express();
 app.use(express.json());
 
-app.use("/users", userRouter);
+app.use("/", router);
+
+app.use((_: Request, res: Response) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
   res.status(err.status || 500).json({ message: err.message });
-  return;
-});
-
-process.on("uncaughtException", (err) => {
-  console.error(err);
-  process.exit(1);
 });
 
 const PORT = 8080;
